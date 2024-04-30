@@ -1,6 +1,8 @@
 import { DateTime } from 'luxon'
-import { BaseModel, column } from '@adonisjs/lucid/orm'
-
+import type { BelongsTo, ManyToMany } from '@adonisjs/lucid/types/relations'
+import User from '#models/user'
+import { BaseModel, column, belongsTo, manyToMany } from '@adonisjs/lucid/orm'
+import Project from '#models/project'
 export default class Task extends BaseModel {
   @column({ isPrimary: true })
   declare id: number
@@ -40,4 +42,10 @@ export default class Task extends BaseModel {
 
   @column.dateTime({ autoCreate: true, autoUpdate: true })
   declare updatedAt: DateTime
+
+  @belongsTo(() => Project)
+  declare project: BelongsTo<typeof Project>
+
+  @manyToMany(() => User)
+  declare skills: ManyToMany<typeof User>
 }

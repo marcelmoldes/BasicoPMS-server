@@ -10,6 +10,7 @@ export default class extends BaseSchema {
       table.string('description', 400).nullable()
       table.date('start_date').notNullable()
       table.date('end_date').notNullable()
+      table.integer('owner_id').notNullable()
       table.string('status').notNullable()
       table.datetime('created_at').notNullable()
       table.datetime('updated_at').notNullable()

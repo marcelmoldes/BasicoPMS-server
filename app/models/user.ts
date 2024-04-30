@@ -8,7 +8,7 @@ import { DbAccessTokensProvider } from '@adonisjs/auth/access_tokens'
 import type { HasMany, ManyToMany } from '@adonisjs/lucid/types/relations'
 import Project from '#models/project'
 import Comment from '#models/comment'
-
+import Attachment from '#models/attachment'
 const AuthFinder = withAuthFinder(() => hash.use('scrypt'), {
   uids: ['email'],
   passwordColumnName: 'password',
@@ -41,9 +41,19 @@ export default class User extends compose(BaseModel, AuthFinder) {
   @hasMany(() => Project)
   declare projects: HasMany<typeof Project>
 
-  @manyToMany(() => Task)
-  declare skills: ManyToMany<typeof Task>
-
   @hasMany(() => Comment)
   declare comments: HasMany<typeof Comment>
+
+  @hasMany(() => Attachment)
+  declare attachments: HasMany<typeof Attachment>
+
+  @manyToMany(() => Task, {
+    localKey: 'id',
+    pivotTable: 'task_user',
+    pivotForeignKey: 'user_id',
+    relatedKey: 'id',
+    pivotRelatedForeignKey: 'task_id',
+    pivotTimestamps: true,
+  })
+  declare tasks: ManyToMany<typeof Task>
 }

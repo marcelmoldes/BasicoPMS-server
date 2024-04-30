@@ -1,8 +1,10 @@
 import { DateTime } from 'luxon'
-import type { BelongsTo, ManyToMany } from '@adonisjs/lucid/types/relations'
+import type { BelongsTo, HasMany, HasOne, ManyToMany } from '@adonisjs/lucid/types/relations'
 import User from '#models/user'
-import { BaseModel, column, belongsTo, manyToMany } from '@adonisjs/lucid/orm'
+import { BaseModel, column, belongsTo, hasOne, manyToMany, hasMany } from '@adonisjs/lucid/orm'
 import Project from '#models/project'
+import Attachment from '#models/attachment'
+import Team from '#models/team'
 export default class Task extends BaseModel {
   @column({ isPrimary: true })
   declare id: number
@@ -46,6 +48,19 @@ export default class Task extends BaseModel {
   @belongsTo(() => Project)
   declare project: BelongsTo<typeof Project>
 
-  @manyToMany(() => User)
-  declare skills: ManyToMany<typeof User>
+  @hasOne(() => Team)
+  declare team: HasOne<typeof Team>
+
+  @manyToMany(() => User, {
+    localKey: 'id',
+    pivotTable: 'task_user',
+    pivotForeignKey: 'task_id',
+    relatedKey: 'id',
+    pivotRelatedForeignKey: 'user_id',
+    pivotTimestamps: true,
+  })
+  declare users: ManyToMany<typeof User>
+
+  @hasMany(() => Attachment)
+  declare attachments: HasMany<typeof Attachment>
 }

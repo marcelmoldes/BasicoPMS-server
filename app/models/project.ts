@@ -1,8 +1,9 @@
 import { DateTime } from 'luxon'
-import { BaseModel, column, hasMany, belongsTo } from '@adonisjs/lucid/orm'
-import type { BelongsTo, HasMany } from '@adonisjs/lucid/types/relations'
+import { BaseModel, column, hasMany, belongsTo, hasOne } from '@adonisjs/lucid/orm'
+import type { BelongsTo, HasMany, HasOne } from '@adonisjs/lucid/types/relations'
 import Task from '#models/task'
 import User from '#models/user'
+import Team from '#models/team'
 export default class Project extends BaseModel {
   @column({ isPrimary: true })
   declare id: number
@@ -32,6 +33,9 @@ export default class Project extends BaseModel {
 
   @hasMany(() => Task)
   declare tasks: HasMany<typeof Task>
+
+  @hasOne(() => Team)
+  declare team: HasOne<typeof Team>
 
   @belongsTo(() => User)
   declare user: BelongsTo<typeof User>

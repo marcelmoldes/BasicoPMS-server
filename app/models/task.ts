@@ -23,14 +23,14 @@ export default class Task extends BaseModel {
   @column()
   declare ownerId: number
 
-  @column.dateTime()
-  declare startDate: DateTime
+  @column()
+  declare startDate: Date
 
-  @column.dateTime()
-  declare dueDate: DateTime
+  @column()
+  declare dueDate: Date
 
-  @column.dateTime()
-  declare completionDate: DateTime
+  @column()
+  declare completionDate: Date
 
   @column()
   declare completionPercentage: number

@@ -8,15 +8,8 @@
 */
 
 import router from '@adonisjs/core/services/router'
+const UsersController = () => import('#controllers/users_controller')
+const TasksController = () => import('#controllers/tasks_controller')
 
-/*
-import UsersController from '#controllers/users_controller'
-
-router.post('/users', [UsersController, 'store'])
- */
-
-router.get('/', async () => {
-  return {
-    hello: 'world',
-  }
-})
+router.resource('tasks', TasksController)
+router.resource('users', UsersController)

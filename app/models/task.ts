@@ -4,7 +4,7 @@ import User from '#models/user'
 import { BaseModel, column, belongsTo, manyToMany, hasMany } from '@adonisjs/lucid/orm'
 import Project from '#models/project'
 import Attachment from '#models/attachment'
-import Comment from "#models/comment";
+import Comment from '#models/comment'
 
 export default class Task extends BaseModel {
   @column({ isPrimary: true })

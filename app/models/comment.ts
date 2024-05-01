@@ -1,9 +1,9 @@
 import { DateTime } from 'luxon'
-import { BaseModel, belongsTo, column, hasMany } from "@adonisjs/lucid/orm";
+import { BaseModel, belongsTo, column, hasMany } from '@adonisjs/lucid/orm'
 import User from '#models/user'
-import type { BelongsTo, HasMany } from "@adonisjs/lucid/types/relations";
-import Attachment from "#models/attachment";
-import Task from "#models/task";
+import type { BelongsTo, HasMany } from '@adonisjs/lucid/types/relations'
+import Attachment from '#models/attachment'
+import Task from '#models/task'
 
 export default class Comment extends BaseModel {
   @column({ isPrimary: true })

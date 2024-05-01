@@ -3,7 +3,7 @@ import { BaseModel, belongsTo, column } from '@adonisjs/lucid/orm'
 import User from '#models/user'
 import type { BelongsTo } from '@adonisjs/lucid/types/relations'
 import Task from '#models/task'
-import Comment from "#models/comment";
+import Comment from '#models/comment'
 
 export default class Attachment extends BaseModel {
   @column({ isPrimary: true })

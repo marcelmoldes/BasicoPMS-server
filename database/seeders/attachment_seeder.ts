@@ -4,12 +4,12 @@ import { faker } from '@faker-js/faker'
 
 export default class extends BaseSeeder {
   async run() {
-    for (let i = 0; i < 100; i++) {
+    for (let i = 1; i <= 10; i++) {
       await Attachment.create({
         name: faker.system.fileType(),
         path: faker.system.filePath(),
-        commentId: faker.number.int(100),
-        taskId: faker.number.int(100),
+        taskId: i,
+        userId: faker.number.int({ min: 1, max: 3 }),
       })
     }
   }

@@ -4,10 +4,11 @@ import { faker } from '@faker-js/faker'
 
 export default class extends BaseSeeder {
   async run() {
-    for (let i = 0; i < 100; i++) {
+    for (let i = 0; i < 20; i++) {
       await Comment.create({
         content: faker.commerce.productDescription(),
-        userId: faker.number.int(100),
+        taskId: faker.number.int({ min: 1, max: 10 }),
+        userId: faker.number.int({ min: 1, max: 3 }),
       })
     }
   }

@@ -1,6 +1,6 @@
 import { DateTime } from 'luxon'
-import { BaseModel, column, hasMany, belongsTo, hasOne } from '@adonisjs/lucid/orm'
-import type { BelongsTo, HasMany, HasOne } from '@adonisjs/lucid/types/relations'
+import { BaseModel, column, hasMany, belongsTo } from '@adonisjs/lucid/orm'
+import type { BelongsTo, HasMany } from '@adonisjs/lucid/types/relations'
 import Task from '#models/task'
 import User from '#models/user'
 import Team from '#models/team'
@@ -13,6 +13,7 @@ export default class Project extends BaseModel {
 
   @column()
   declare description: string
+
   @column()
   declare startDate: Date
 
@@ -25,6 +26,9 @@ export default class Project extends BaseModel {
   @column()
   declare ownerId: number
 
+  @column()
+  declare teamId: number
+
   @column.dateTime({ autoCreate: true })
   declare createdAt: DateTime
 
@@ -34,9 +38,9 @@ export default class Project extends BaseModel {
   @hasMany(() => Task)
   declare tasks: HasMany<typeof Task>
 
-  @hasOne(() => Team)
-  declare team: HasOne<typeof Team>
+  @belongsTo(() => Team)
+  declare team: BelongsTo<typeof Team>
 
   @belongsTo(() => User)
-  declare user: BelongsTo<typeof User>
+  declare owner: BelongsTo<typeof User>
 }

@@ -4,19 +4,20 @@ import { faker } from '@faker-js/faker'
 
 export default class extends BaseSeeder {
   async run() {
-    for (let i = 0; i < 100; i++) {
-      await Task.create({
+    for (let i = 0; i < 10; i++) {
+      const task = await Task.create({
         name: faker.company.name(),
-        projectId: faker.number.int(100),
+        projectId: 1,
         description: faker.commerce.productDescription(),
         priority: faker.company.buzzVerb(),
         status: faker.company.buzzVerb(),
         startDate: faker.date.anytime(),
         dueDate: faker.date.anytime(),
         completionDate: faker.date.anytime(),
-        completionPercentage: faker.datatype.number(100),
-        ownerId: faker.number.int(100),
+        completionPercentage: faker.number.int(100),
+        ownerId: faker.number.int({ min: 1, max: 3 }),
       })
+      await task.related('users').attach([faker.number.int({ min: 1, max: 3 })])
     }
   }
 }

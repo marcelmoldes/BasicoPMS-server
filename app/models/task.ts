@@ -1,10 +1,11 @@
 import { DateTime } from 'luxon'
-import type { BelongsTo, HasMany, HasOne, ManyToMany } from '@adonisjs/lucid/types/relations'
+import type { BelongsTo, HasMany, ManyToMany } from '@adonisjs/lucid/types/relations'
 import User from '#models/user'
-import { BaseModel, column, belongsTo, hasOne, manyToMany, hasMany } from '@adonisjs/lucid/orm'
+import { BaseModel, column, belongsTo, manyToMany, hasMany } from '@adonisjs/lucid/orm'
 import Project from '#models/project'
 import Attachment from '#models/attachment'
-import Team from '#models/team'
+import Comment from "#models/comment";
+
 export default class Task extends BaseModel {
   @column({ isPrimary: true })
   declare id: number
@@ -48,19 +49,22 @@ export default class Task extends BaseModel {
   @belongsTo(() => Project)
   declare project: BelongsTo<typeof Project>
 
-  @hasOne(() => Team)
-  declare team: HasOne<typeof Team>
+  @belongsTo(() => User)
+  declare owner: BelongsTo<typeof User>
 
   @manyToMany(() => User, {
-    localKey: 'id',
+    // localKey: 'id',
     pivotTable: 'task_user',
-    pivotForeignKey: 'task_id',
-    relatedKey: 'id',
-    pivotRelatedForeignKey: 'user_id',
+    // pivotForeignKey: 'task_id',
+    // relatedKey: 'id',
+    // pivotRelatedForeignKey: 'user_id',
     pivotTimestamps: true,
   })
   declare users: ManyToMany<typeof User>
 
   @hasMany(() => Attachment)
   declare attachments: HasMany<typeof Attachment>
+
+  @hasMany(() => Comment)
+  declare comments: HasMany<typeof Comment>
 }

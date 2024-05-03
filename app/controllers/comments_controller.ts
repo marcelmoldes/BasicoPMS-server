@@ -1,5 +1,5 @@
 import type { HttpContext } from '@adonisjs/core/http'
-import { createCommentValidator, updateCommentValidator } from '#validators/comment'
+import { createCommentValidator, updateCommentValidator } from '#validators/comment_validator'
 import Comment from '#models/comment'
 
 export default class CommentController {

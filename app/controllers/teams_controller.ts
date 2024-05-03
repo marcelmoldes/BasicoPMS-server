@@ -1,5 +1,5 @@
 import type { HttpContext } from '@adonisjs/core/http'
-import { createTeamValidator, updateTeamValidator } from '#validators/team'
+import { createTeamValidator, updateTeamValidator } from '#validators/team_validator'
 import Team from '#models/team'
 export default class TeamController {
   async index({ request }: HttpContext) {

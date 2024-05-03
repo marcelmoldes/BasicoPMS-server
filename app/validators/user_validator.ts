@@ -14,7 +14,7 @@ export const updateUserValidator = vine.compile(
   vine.object({
     firstName: vine.string().trim().minLength(3).maxLength(30),
     lastName: vine.string().trim().minLength(3).maxLength(55),
-    email: vine.string().trim().minLength(3).maxLength(40),
+    email: vine.string().trim().email().minLength(3).maxLength(40),
     password: vine.string().trim().minLength(3).maxLength(12),
     teamId: vine.number(),
   })

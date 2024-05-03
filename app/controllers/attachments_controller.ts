@@ -1,6 +1,6 @@
 import type { HttpContext } from '@adonisjs/core/http'
 import Attachment from '#models/attachment'
-import { createAttachmentValidator, updateAttachmentValidator } from '#validators/attachment'
+import { createAttachmentValidator, updateAttachmentValidator } from '#validators/attachment_validator'
 
 export default class AttachmentController {
   async index({ request }: HttpContext) {

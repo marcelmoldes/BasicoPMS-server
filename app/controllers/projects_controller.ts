@@ -1,5 +1,5 @@
 import type { HttpContext } from '@adonisjs/core/http'
-import { createProjectValidator, updateProjectValidator } from '#validators/project'
+import { createProjectValidator, updateProjectValidator } from '#validators/project_validator'
 import Project from '#models/project'
 
 export default class ProjectController {

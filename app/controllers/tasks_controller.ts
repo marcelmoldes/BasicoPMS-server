@@ -1,7 +1,6 @@
 import type { HttpContext } from '@adonisjs/core/http'
 import { createTaskValidator, updateTaskValidator } from '#validators/task_validator'
 import Task from '#models/task'
-import { column } from '@adonisjs/lucid/orm'
 
 export default class TaskController {
   async index({ request }: HttpContext) {
@@ -12,7 +11,7 @@ export default class TaskController {
 
   async store({ request, response }: HttpContext) {
     try {
-      const userData = request.only([
+      const taskData = request.only([
         'projectId',
         'name',
         'description',
@@ -22,9 +21,9 @@ export default class TaskController {
         'startDate',
         'dueDate',
         'completionDate',
-       'completionPercentage',
+        'completionPercentage',
       ])
-      const payload = await createTaskValidator.validate(userData)
+      const payload = await createTaskValidator.validate(taskData)
       const task = await Task.create(payload)
       return response.status(200).json(task)
     } catch (error) {
@@ -44,7 +43,7 @@ export default class TaskController {
   async update({ params, response, request }: HttpContext) {
     try {
       const task = await Task.findOrFail(params.id)
-      const userData = request.only([
+      const taskData = request.only([
         'projectId',
         'name',
         'description',
@@ -56,7 +55,7 @@ export default class TaskController {
         'completionDate',
         'completionPercentage',
       ])
-      const payload = await updateTaskValidator.validate(userData)
+      const payload = await updateTaskValidator.validate(taskData)
       await task.save()
       await task.merge(payload).save()
       return response.json(task)

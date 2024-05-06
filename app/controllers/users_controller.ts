@@ -3,36 +3,49 @@ import { createUserValidator, updateUserValidator } from '#validators/user_valid
 import User from '#models/user'
 
 export default class UsersController {
-  async index({ request }: HttpContext) {
+  async index({ request, auth }: HttpContext) {
+    const teamId = auth.user?.teamId
     const page = request.input('page')
     const limit = request.input('limit')
-    return await User.query().paginate(page, limit)
+    return await User.query().where('team_id', teamId).paginate(page, limit)
   }
 
-  async store({ request, response }: HttpContext) {
-    const userData = request.only(['firstName', 'teamId', 'lastName', 'email', 'password'])
+  async store({ request, response, auth }: HttpContext) {
+    const teamId = auth.user?.teamId
+    const userData = request.only(['firstName', 'lastName', 'email', 'password'])
     const payload = await createUserValidator.validate(userData)
     try {
-      const user = await User.create(payload)
+      const user = await User.create({
+        teamId,
+        ...payload,
+      })
       return response.status(200).json(user)
     } catch (error) {
       return error
     }
   }
 
-  async show({ params, response }: HttpContext) {
+  async show({ params, response, auth }: HttpContext) {
+    const teamId = auth.user?.teamId
     try {
-      const user = await User.findOrFail(params.id)
+      const user = await User.findByOrFail({
+        id: params.id,
+        teamId,
+      })
       return response.json(user)
     } catch (error) {
       return response.status(400).json({ message: `User not found with  id  ${params.id}` })
     }
   }
 
-  async update({ params, response, request }: HttpContext) {
+  async update({ params, response, request, auth }: HttpContext) {
+    const teamId = auth.user?.teamId
     try {
-      const user = await User.findOrFail(params.id)
-      const userData = request.only(['firstName', 'teamId', 'lastName', 'email', 'password'])
+      const user = await User.findByOrFail({
+        id: params.id,
+        teamId,
+      })
+      const userData = request.only(['firstName', 'lastName', 'email', 'password'])
       const payload = await updateUserValidator.validate(userData)
       await user.save()
       await user.merge(payload).save()
@@ -42,9 +55,13 @@ export default class UsersController {
     }
   }
 
-  async destroy({ params, response }: HttpContext) {
+  async destroy({ params, response, auth }: HttpContext) {
+    const teamId = auth.user?.teamId
     try {
-      const user = await User.findOrFail(params.id)
+      const user = await User.findByOrFail({
+        id: params.id,
+        teamId,
+      })
       await user.delete()
       return response.status(200).json({ message: 'User deleted' })
     } catch (error) {

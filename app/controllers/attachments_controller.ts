@@ -1,18 +1,16 @@
 import type { HttpContext } from '@adonisjs/core/http'
 import Attachment from '#models/attachment'
-import { createAttachmentValidator, updateAttachmentValidator } from '#validators/attachment_validator'
+import { createAttachmentValidator } from '#validators/attachment_validator'
+import AttachmentPolicy from '#policies/project_policy'
 
 export default class AttachmentController {
-  async index({ request }: HttpContext) {
-    const page = request.input('page')
-    const limit = request.input('limit')
-    return await Attachment.query().paginate(page, limit)
-  }
-
-  async store({ request, response }: HttpContext) {
+  async store({ bouncer, request, response }: HttpContext) {
     try {
-      const attachmentData = request.only(['name', 'attachmentId', 'path', 'commentId', 'userId'])
+      const attachmentData = request.only(['name', 'path', 'commentId', 'taskId'])
       const payload = await createAttachmentValidator.validate(attachmentData)
+      if (await bouncer.with(AttachmentPolicy).denies('canEdit', payload)) {
+        return response.forbidden('Cannot create attachment')
+      }
       const attachment = await Attachment.create(payload)
       return response.status(200).json(attachment)
     } catch (error) {
@@ -20,31 +18,24 @@ export default class AttachmentController {
     }
   }
 
-  async show({ params, response }: HttpContext) {
+  async show({ bouncer, params, response }: HttpContext) {
     try {
       const attachment = await Attachment.findOrFail(params.id)
+      if (await bouncer.with(AttachmentPolicy).denies('canEdit', attachment)) {
+        return response.forbidden('Cannot display attachment')
+      }
       return response.json(attachment)
     } catch (error) {
       return response.status(400).json({ message: `Attachment not found with  id  ${params.id}` })
     }
   }
 
-  async update({ params, response, request }: HttpContext) {
+  async destroy({ bouncer, params, response }: HttpContext) {
     try {
       const attachment = await Attachment.findOrFail(params.id)
-      const attachmentData = request.only(['name', 'attachmentId', 'path', 'commentId', 'userId'])
-      const payload = await updateAttachmentValidator.validate(attachmentData)
-      await attachment.save()
-      await attachment.merge(payload).save()
-      return response.json(attachment)
-    } catch (error) {
-      return error
-    }
-  }
-
-  async destroy({ params, response }: HttpContext) {
-    try {
-      const attachment = await Attachment.findOrFail(params.id)
+      if (await bouncer.with(AttachmentPolicy).denies('canEdit', attachment)) {
+        return response.forbidden('Cannot delete attachment')
+      }
       await attachment.delete()
       return response.status(200).json({ message: 'Attachment deleted' })
     } catch (error) {

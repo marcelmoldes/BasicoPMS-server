@@ -3,13 +3,13 @@ import { createTaskValidator, updateTaskValidator } from '#validators/task_valid
 import Task from '#models/task'
 
 export default class TaskController {
-  async index({ request }: HttpContext) {
+  async index({ request, auth }: HttpContext) {
     const page = request.input('page')
     const limit = request.input('limit')
     return await Task.query().paginate(page, limit)
   }
 
-  async store({ request, response }: HttpContext) {
+  async store({ request, response, auth }: HttpContext) {
     try {
       const taskData = request.only([
         'projectId',
@@ -31,7 +31,7 @@ export default class TaskController {
     }
   }
 
-  async show({ params, response }: HttpContext) {
+  async show({ params, response, auth }: HttpContext) {
     try {
       const task = await Task.findOrFail(params.id)
       return response.json(task)
@@ -40,7 +40,7 @@ export default class TaskController {
     }
   }
 
-  async update({ params, response, request }: HttpContext) {
+  async update({ params, response, request, auth }: HttpContext) {
     try {
       const task = await Task.findOrFail(params.id)
       const taskData = request.only([
@@ -64,7 +64,7 @@ export default class TaskController {
     }
   }
 
-  async destroy({ params, response }: HttpContext) {
+  async destroy({ params, response, auth }: HttpContext) {
     try {
       const task = await Task.findOrFail(params.id)
       await task.delete()

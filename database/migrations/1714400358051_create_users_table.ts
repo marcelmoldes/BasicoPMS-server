@@ -11,6 +11,7 @@ export default class extends BaseSchema {
       table.integer('team_id').notNullable()
       table.string('email', 200).notNullable()
       table.string('password', 255).notNullable()
+      table.string('role', 50).notNullable()
       table.datetime('created_at').notNullable()
       table.datetime('updated_at').notNullable()
     })

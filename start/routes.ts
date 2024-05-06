@@ -1,14 +1,42 @@
 import router from '@adonisjs/core/services/router'
+import { middleware } from '#start/kernel'
+
+const AuthController = () => import('#controllers/auth_controller')
 const UsersController = () => import('#controllers/users_controller')
 const TasksController = () => import('#controllers/tasks_controller')
 const AttachmentsController = () => import('#controllers/attachments_controller')
 const CommentsController = () => import('#controllers/comments_controller')
-const TeamsController = () => import('#controllers/teams_controller')
 const ProjectsController = () => import('#controllers/projects_controller')
 
-router.resource('tasks', TasksController)
-router.resource('users', UsersController)
-router.resource('projects', ProjectsController)
-router.resource('teams', TeamsController)
-router.resource('comments', CommentsController)
-router.resource('attachments', AttachmentsController)
+router.post('/login', [AuthController, 'login'])
+router.post('/register', [AuthController, 'register'])
+router.resource('tasks', TasksController).use(
+  '*',
+  middleware.auth({
+    guards: ['api'],
+  })
+)
+router.resource('users', UsersController).use(
+  '*',
+  middleware.auth({
+    guards: ['api'],
+  })
+)
+router.resource('projects', ProjectsController).use(
+  '*',
+  middleware.auth({
+    guards: ['api'],
+  })
+)
+router.resource('comments', CommentsController).use(
+  '*',
+  middleware.auth({
+    guards: ['api'],
+  })
+)
+router.resource('attachments', AttachmentsController).use(
+  '*',
+  middleware.auth({
+    guards: ['api'],
+  })
+)

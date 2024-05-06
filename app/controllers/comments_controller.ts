@@ -3,13 +3,14 @@ import { createCommentValidator, updateCommentValidator } from '#validators/comm
 import Comment from '#models/comment'
 
 export default class CommentController {
-  async index({ request }: HttpContext) {
+  async index({ request, auth }: HttpContext) {
+    const teamId = auth.user?.teamId
     const page = request.input('page')
     const limit = request.input('limit')
     return await Comment.query().paginate(page, limit)
   }
 
-  async store({ request, response }: HttpContext) {
+  async store({ request, response, auth }: HttpContext) {
     try {
       const commentData = request.only(['content', 'userId', 'taskId'])
       const payload = await createCommentValidator.validate(commentData)
@@ -20,7 +21,7 @@ export default class CommentController {
     }
   }
 
-  async show({ params, response }: HttpContext) {
+  async show({ params, response, auth }: HttpContext) {
     try {
       const comment = await Comment.findOrFail(params.id)
       return response.json(comment)
@@ -29,7 +30,7 @@ export default class CommentController {
     }
   }
 
-  async update({ params, response, request }: HttpContext) {
+  async update({ params, response, request, auth }: HttpContext) {
     try {
       const comment = await Comment.findOrFail(params.id)
       const commentData = request.only(['content', 'userId', 'taskId'])
@@ -42,7 +43,7 @@ export default class CommentController {
     }
   }
 
-  async destroy({ params, response }: HttpContext) {
+  async destroy({ params, response, auth }: HttpContext) {
     try {
       const comment = await Comment.findOrFail(params.id)
       await comment.delete()

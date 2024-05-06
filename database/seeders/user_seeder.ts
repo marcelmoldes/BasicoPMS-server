@@ -9,6 +9,7 @@ export default class extends BaseSeeder {
         lastName: faker.person.lastName(),
         email: faker.internet.email(),
         teamId: 1,
+        role: i === 0 ? 'admin' : 'user',
         password: 'password',
       })
     }

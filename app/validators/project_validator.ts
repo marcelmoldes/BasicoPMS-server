@@ -4,8 +4,8 @@ export const projectValidator = vine.compile(
   vine.object({
     name: vine.string().trim().minLength(3).maxLength(35),
     description: vine.string().trim().minLength(3).maxLength(400),
-    startDate: vine.date(),
-    endDate: vine.date(),
-    status: vine.string().trim().minLength(3).maxLength(30),
+    startDate: vine.date().optional(),
+    endDate: vine.date().optional(),
+    status: vine.string().trim().in(['active', 'in_progress', 'on_track', 'delayed']),
   })
 )

@@ -9,7 +9,10 @@ export default class ProjectController {
     const teamId = auth.user?.teamId
     const page = request.input('page')
     const limit = request.input('limit')
-    return await Project.query().where('team_id', teamId).paginate(page, limit)
+    return await Project.query()
+      .where('team_id', teamId)
+      .where('deleted', false)
+      .paginate(page, limit)
   }
 
   async store({ request, response, auth }: HttpContext) {
@@ -32,6 +35,9 @@ export default class ProjectController {
     if (!auth.user) return
     try {
       const project = await Project.findOrFail(params.id)
+      if (project.deleted) {
+        throw Error('Project deleted')
+      }
       if (await bouncer.with(AttachmentPolicy).denies('view', project)) {
         return response.forbidden('Cannot view project')
       }
@@ -45,6 +51,9 @@ export default class ProjectController {
     if (!auth.user) return
     try {
       const project = await Project.findOrFail(params.id)
+      if (project.deleted) {
+        throw Error('Project deleted')
+      }
       const projectData = request.only(['name', 'description', 'startDate', 'endDate', 'status'])
       const payload = await projectValidator.validate(projectData)
       if (await bouncer.with(AttachmentPolicy).denies('edit', project)) {
@@ -64,7 +73,8 @@ export default class ProjectController {
       if (await bouncer.with(AttachmentPolicy).denies('delete', project)) {
         return response.forbidden('Cannot delete project')
       }
-      await project.delete()
+      project.deleted = true
+      await project.save()
       return response.status(200).json({ message: 'Project deleted' })
     } catch (error) {
       return response.status(400).json({ message: `Project not found,cant delete` })

@@ -29,6 +29,9 @@ export default class Project extends BaseModel {
   @column()
   declare teamId: number
 
+  @column()
+  declare deleted: boolean
+
   @column.dateTime({ autoCreate: true })
   declare createdAt: DateTime
 

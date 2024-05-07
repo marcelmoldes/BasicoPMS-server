@@ -16,6 +16,7 @@ export default class extends BaseSeeder {
         completionDate: faker.date.anytime(),
         completionPercentage: faker.number.int(100),
         ownerId: faker.number.int({ min: 1, max: 3 }),
+        teamId: 1,
       })
       await task.related('users').attach([faker.number.int({ min: 1, max: 3 })])
     }

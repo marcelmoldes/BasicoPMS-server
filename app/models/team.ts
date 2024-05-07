@@ -3,6 +3,7 @@ import { BaseModel, column, hasMany } from '@adonisjs/lucid/orm'
 import type { HasMany } from '@adonisjs/lucid/types/relations'
 import User from '#models/user'
 import Project from '#models/project'
+import Task from '#models/task'
 
 export default class Team extends BaseModel {
   @column({ isPrimary: true })
@@ -19,6 +20,9 @@ export default class Team extends BaseModel {
 
   @hasMany(() => Project)
   declare projects: HasMany<typeof Project>
+
+  @hasMany(() => Task)
+  declare tasks: HasMany<typeof Task>
 
   @hasMany(() => User)
   declare users: HasMany<typeof User>

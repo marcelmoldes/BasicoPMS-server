@@ -1,7 +1,7 @@
 import type { HttpContext } from '@adonisjs/core/http'
-import { projectValidator } from '#validators/project_validator'
 import Project from '#models/project'
-import AttachmentPolicy from '#policies/project_policy'
+import { projectValidator } from '#validators/project_validator'
+import ProjectPolicy from '#policies/project_policy'
 
 export default class ProjectController {
   async index({ request, auth }: HttpContext) {
@@ -38,7 +38,7 @@ export default class ProjectController {
       if (project.deleted) {
         throw Error('Project deleted')
       }
-      if (await bouncer.with(AttachmentPolicy).denies('view', project)) {
+      if (await bouncer.with(ProjectPolicy).denies('view', project)) {
         return response.forbidden('Cannot view project')
       }
       return response.json(project)
@@ -56,7 +56,7 @@ export default class ProjectController {
       }
       const projectData = request.only(['name', 'description', 'startDate', 'endDate', 'status'])
       const payload = await projectValidator.validate(projectData)
-      if (await bouncer.with(AttachmentPolicy).denies('edit', project)) {
+      if (await bouncer.with(ProjectPolicy).denies('edit', project)) {
         return response.forbidden('Cannot edit project')
       }
       await project.merge(payload).save()
@@ -70,7 +70,7 @@ export default class ProjectController {
     if (!auth.user) return
     try {
       const project = await Project.findOrFail(params.id)
-      if (await bouncer.with(AttachmentPolicy).denies('delete', project)) {
+      if (await bouncer.with(ProjectPolicy).denies('delete', project)) {
         return response.forbidden('Cannot delete project')
       }
       project.deleted = true

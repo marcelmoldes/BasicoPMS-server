@@ -1,15 +1,28 @@
 import type { HttpContext } from '@adonisjs/core/http'
-import { createTaskValidator, updateTaskValidator } from '#validators/task_validator'
 import Task from '#models/task'
+import TaskPolicy from '#policies/task_policy'
+import { taskValidator } from '#validators/task_validator'
+import Project from '#models/project'
 
 export default class TaskController {
   async index({ request, auth }: HttpContext) {
+    if (!auth.user) return
+    const teamId = auth.user?.teamId
     const page = request.input('page')
     const limit = request.input('limit')
-    return await Task.query().paginate(page, limit)
+    const projectId = request.input('projectId')
+    if (projectId) {
+      return await Task.query()
+        .where('team_id', teamId)
+        .andWhere('project_id', projectId)
+        .paginate(page, limit)
+    } else {
+      return await Task.query().where('team_id', teamId).paginate(page, limit)
+    }
   }
 
-  async store({ request, response, auth }: HttpContext) {
+  async store({ bouncer, request, response, auth }: HttpContext) {
+    if (!auth.user) return
     try {
       const taskData = request.only([
         'projectId',
@@ -17,46 +30,59 @@ export default class TaskController {
         'description',
         'status',
         'priority',
-        'ownerId',
         'startDate',
         'dueDate',
         'completionDate',
         'completionPercentage',
       ])
-      const payload = await createTaskValidator.validate(taskData)
-      const task = await Task.create(payload)
+      const payload = await taskValidator.validate(taskData)
+      const task = new Task().merge({
+        teamId: auth.user.teamId,
+        ownerId: auth.user.id,
+        ...payload,
+      })
+      const project = await Project.findOrFail(payload.projectId)
+      if (await bouncer.with(TaskPolicy).denies('create', task, project)) {
+        return response.forbidden('Cannot create task')
+      }
+      await task.save()
       return response.status(200).json(task)
     } catch (error) {
       return error
     }
   }
 
-  async show({ params, response, auth }: HttpContext) {
+  async show({ bouncer, params, response, auth }: HttpContext) {
+    if (!auth.user) return
     try {
       const task = await Task.findOrFail(params.id)
+      if (await bouncer.with(TaskPolicy).denies('view', task)) {
+        return response.forbidden('Cannot view task')
+      }
       return response.json(task)
     } catch (error) {
       return response.status(400).json({ message: `Task not found with  id  ${params.id}` })
     }
   }
 
-  async update({ params, response, request, auth }: HttpContext) {
+  async update({ bouncer, params, response, request, auth }: HttpContext) {
+    if (!auth.user) return
     try {
       const task = await Task.findOrFail(params.id)
       const taskData = request.only([
-        'projectId',
         'name',
         'description',
         'status',
         'priority',
-        'ownerId',
         'startDate',
         'dueDate',
         'completionDate',
         'completionPercentage',
       ])
-      const payload = await updateTaskValidator.validate(taskData)
-      await task.save()
+      const payload = await taskValidator.validate(taskData)
+      if (await bouncer.with(TaskPolicy).denies('edit', task)) {
+        return response.forbidden('Cannot edit task')
+      }
       await task.merge(payload).save()
       return response.json(task)
     } catch (error) {
@@ -64,9 +90,13 @@ export default class TaskController {
     }
   }
 
-  async destroy({ params, response, auth }: HttpContext) {
+  async destroy({ bouncer, params, response, auth }: HttpContext) {
+    if (!auth.user) return
     try {
       const task = await Task.findOrFail(params.id)
+      if (await bouncer.with(TaskPolicy).denies('delete', task)) {
+        return response.forbidden('Cannot delete task')
+      }
       await task.delete()
       return response.status(200).json({ message: 'Task deleted' })
     } catch (error) {

@@ -5,6 +5,7 @@ import { BaseModel, column, belongsTo, manyToMany, hasMany } from '@adonisjs/luc
 import Project from '#models/project'
 import Attachment from '#models/attachment'
 import Comment from '#models/comment'
+import Team from '#models/team'
 
 export default class Task extends BaseModel {
   @column({ isPrimary: true })
@@ -27,6 +28,9 @@ export default class Task extends BaseModel {
 
   @column()
   declare ownerId: number
+
+  @column()
+  declare teamId: number
 
   @column()
   declare startDate: Date
@@ -61,6 +65,9 @@ export default class Task extends BaseModel {
     pivotTimestamps: true,
   })
   declare users: ManyToMany<typeof User>
+
+  @belongsTo(() => Team)
+  declare team: BelongsTo<typeof Team>
 
   @hasMany(() => Attachment)
   declare attachments: HasMany<typeof Attachment>

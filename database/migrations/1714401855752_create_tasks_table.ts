@@ -1,4 +1,5 @@
 import { BaseSchema } from '@adonisjs/lucid/schema'
+import vine from '@vinejs/vine'
 
 export default class extends BaseSchema {
   protected tableName = 'tasks'
@@ -18,6 +19,7 @@ export default class extends BaseSchema {
       table.integer('owner_id').notNullable()
       table.datetime('created_at').notNullable()
       table.datetime('updated_at').notNullable()
+      table.integer('team_id').notNullable()
     })
   }
 

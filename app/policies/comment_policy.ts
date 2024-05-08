@@ -10,9 +10,9 @@ export default class CommentPolicy extends BasePolicy {
     return user.teamId === comment.teamId && user.teamId === task.teamId
   }
   edit(user: User, comment: Comment) {
-    return user.teamId === comment.teamId
+    return user.id === comment.userId
   }
   delete(user: User, comment: Comment) {
-    return user.teamId === comment.teamId
+    return user.id === comment.userId
   }
 }

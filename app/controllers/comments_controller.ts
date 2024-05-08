@@ -1,7 +1,7 @@
 import type { HttpContext } from '@adonisjs/core/http'
 import CommentPolicy from '#policies/comment_policy'
 import Comment from '#models/comment'
-import { commentValidator } from '#validators/comment_validator'
+import { createCommentValidator, updateCommentValidator } from '#validators/comment_validator'
 import Task from '#models/task'
 
 export default class CommentsController {
@@ -25,7 +25,7 @@ export default class CommentsController {
     if (!auth.user) return
     try {
       const commentData = request.only(['content', 'taskId'])
-      const payload = await commentValidator.validate(commentData)
+      const payload = await createCommentValidator.validate(commentData)
       const comment = new Comment().merge({
         teamId: auth.user.teamId,
         userId: auth.user.id,
@@ -41,58 +41,47 @@ export default class CommentsController {
       return error
     }
   }
-}
-/*
-    async show({ bouncer, params, response, auth }: HttpContext) {
-      if (!auth.user) return
-      try {
-        const task = await Task.findOrFail(params.id)
-        if (await bouncer.with(TaskPolicy).denies('view', task)) {
-          return response.forbidden('Cannot view task')
-        }
-        return response.json(task)
-      } catch (error) {
-        return response.status(400).json({ message: `Task not found with  id  ${params.id}` })
-      }
-    }
 
-    async update({ bouncer, params, response, request, auth }: HttpContext) {
-      if (!auth.user) return
-      try {
-        const task = await Task.findOrFail(params.id)
-        const taskData = request.only([
-          'name',
-          'description',
-          'status',
-          'priority',
-          'startDate',
-          'dueDate',
-          'completionDate',
-          'completionPercentage',
-        ])
-        const payload = await taskValidator.validate(taskData)
-        if (await bouncer.with(TaskPolicy).denies('edit', task)) {
-          return response.forbidden('Cannot edit task')
-        }
-        await task.merge(payload).save()
-        return response.json(task)
-      } catch (error) {
-        return error
+  async show({ bouncer, params, response, auth }: HttpContext) {
+    if (!auth.user) return
+    try {
+      const comment = await Comment.findOrFail(params.id)
+      if (await bouncer.with(CommentPolicy).denies('view', comment)) {
+        return response.forbidden('Cannot view comment')
       }
-    }
-
-    async destroy({ bouncer, params, response, auth }: HttpContext) {
-      if (!auth.user) return
-      try {
-        const task = await Task.findOrFail(params.id)
-        if (await bouncer.with(TaskPolicy).denies('delete', task)) {
-          return response.forbidden('Cannot delete task')
-        }
-        await task.delete()
-        return response.status(200).json({ message: 'Task deleted' })
-      } catch (error) {
-        return response.status(400).json({ message: `Task not found,cant delete` })
-      }
+      return response.json(comment)
+    } catch (error) {
+      return response.status(400).json({ message: `Comment not found with  id  ${params.id}` })
     }
   }
-  */
+
+  async update({ bouncer, params, response, request, auth }: HttpContext) {
+    if (!auth.user) return
+    try {
+      const comment = await Comment.findOrFail(params.id)
+      const commentData = request.only(['content'])
+      const payload = await updateCommentValidator.validate(commentData)
+      if (await bouncer.with(CommentPolicy).denies('edit', comment)) {
+        return response.forbidden('Cannot edit comment')
+      }
+      await comment.merge(payload).save()
+      return response.json(comment)
+    } catch (error) {
+      return error
+    }
+  }
+
+  async destroy({ bouncer, params, response, auth }: HttpContext) {
+    if (!auth.user) return
+    try {
+      const comment = await Comment.findOrFail(params.id)
+      if (await bouncer.with(CommentPolicy).denies('delete', comment)) {
+        return response.forbidden('Cannot delete comment')
+      }
+      await comment.delete()
+      return response.status(200).json({ message: 'Comment deleted' })
+    } catch (error) {
+      return response.status(400).json({ message: `Comment not found,cant delete` })
+    }
+  }
+}

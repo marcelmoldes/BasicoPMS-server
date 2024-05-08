@@ -8,6 +8,7 @@ export default class extends BaseSchema {
       table.increments('id').notNullable()
       table.integer('task_id').notNullable()
       table.integer('user_id').notNullable()
+      table.integer('team_id').notNullable()
       table.text('content').notNullable()
       table.datetime('created_at').notNullable()
       table.datetime('updated_at').notNullable()

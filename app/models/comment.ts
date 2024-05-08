@@ -10,10 +10,13 @@ export default class Comment extends BaseModel {
   declare id: number
 
   @column()
+  declare taskId: number
+
+  @column()
   declare userId: number
 
   @column()
-  declare taskId: number
+  declare teamId: number
 
   @column()
   declare content: string

@@ -8,7 +8,8 @@ export default class extends BaseSeeder {
       await Comment.create({
         content: faker.commerce.productDescription(),
         taskId: faker.number.int({ min: 1, max: 10 }),
-        userId: faker.number.int({ min: 1, max: 3 }),
+        userId: faker.number.int({ min: 1, max: 4 }),
+        teamId: 1,
       })
     }
   }

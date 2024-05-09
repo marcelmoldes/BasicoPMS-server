@@ -9,6 +9,8 @@ export default class extends BaseSchema {
       table.string('name', 255).notNullable()
       table.string('path', 255).notNullable()
       table.integer('comment_id')
+
+      table.integer('team_id').notNullable()
       table.integer('task_id').notNullable()
       table.integer('user_id').notNullable()
       table.timestamp('created_at')

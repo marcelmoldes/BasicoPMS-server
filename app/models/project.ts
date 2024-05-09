@@ -41,6 +41,7 @@ export default class Project extends BaseModel {
   @hasMany(() => Task)
   declare tasks: HasMany<typeof Task>
 
+
   @belongsTo(() => Team)
   declare team: BelongsTo<typeof Team>
 

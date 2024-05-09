@@ -4,6 +4,7 @@ import User from '#models/user'
 import type { BelongsTo } from '@adonisjs/lucid/types/relations'
 import Task from '#models/task'
 import Comment from '#models/comment'
+import Team from '#models/team'
 
 export default class Attachment extends BaseModel {
   @column({ isPrimary: true })
@@ -11,6 +12,9 @@ export default class Attachment extends BaseModel {
 
   @column()
   declare name: string
+
+  @column()
+  declare teamId: number
 
   @column()
   declare path: string
@@ -38,4 +42,7 @@ export default class Attachment extends BaseModel {
 
   @belongsTo(() => Task)
   declare task: BelongsTo<typeof Task>
+
+  @belongsTo(() => Team)
+  declare team: BelongsTo<typeof Team>
 }

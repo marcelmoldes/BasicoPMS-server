@@ -10,6 +10,7 @@ export default class extends BaseSeeder {
         path: faker.system.filePath(),
         taskId: i,
         userId: faker.number.int({ min: 1, max: 3 }),
+        teamId: 1,
       })
     }
   }

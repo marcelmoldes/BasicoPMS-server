@@ -3,6 +3,7 @@ import Attachment from '#models/attachment'
 import { createAttachmentValidator } from '#validators/attachment_validator'
 import AttachmentPolicy from '#policies/attachment_policy'
 import Task from '#models/task'
+import Comment from '#models/comment'
 
 export default class AttachmentsController {
   async index({ request, auth }: HttpContext) {
@@ -11,10 +12,16 @@ export default class AttachmentsController {
     const page = request.input('page')
     const limit = request.input('limit')
     const taskId = request.input('taskId')
+    const commentId = request.input('commentId')
     if (taskId) {
       return await Attachment.query()
         .where('team_id', teamId)
         .andWhere('task_id', taskId)
+        .paginate(page, limit)
+    } else if (commentId) {
+      return await Attachment.query()
+        .where('team_id', teamId)
+        .andWhere('comment_id', commentId)
         .paginate(page, limit)
     } else {
       return await Attachment.query().where('team_id', teamId).paginate(page, limit)
@@ -24,16 +31,24 @@ export default class AttachmentsController {
   async store({ bouncer, request, response, auth }: HttpContext) {
     if (!auth.user) return
     try {
-      const attachmentData = request.only(['name', 'path', 'taskId'])
+      const attachmentData = request.only(['name', 'path', 'taskId', 'commentId'])
       const payload = await createAttachmentValidator.validate(attachmentData)
       const attachment = new Attachment().merge({
         teamId: auth.user.teamId,
         userId: auth.user.id,
         ...payload,
       })
-      const task = await Task.findOrFail(payload.taskId)
-      if (await bouncer.with(AttachmentPolicy).denies('create', attachment, task)) {
-        return response.forbidden('Cannot create Attachment')
+      if (attachment.taskId) {
+        attachment.commentId = null
+        const task = await Task.findOrFail(payload.taskId)
+        if (await bouncer.with(AttachmentPolicy).denies('createForTask', attachment, task)) {
+          return response.forbidden('Cannot create Attachment')
+        }
+      } else {
+        const comment = await Comment.findOrFail(payload.commentId)
+        if (await bouncer.with(AttachmentPolicy).denies('createForComment', attachment, comment)) {
+          return response.forbidden('Cannot create Attachment')
+        }
       }
       await attachment.save()
       return response.status(200).json(attachment)

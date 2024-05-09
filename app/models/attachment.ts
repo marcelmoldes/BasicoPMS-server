@@ -23,10 +23,10 @@ export default class Attachment extends BaseModel {
   declare userId: number
 
   @column()
-  declare commentId: number
+  declare commentId: number | null
 
   @column()
-  declare taskId: number
+  declare taskId: number | null
 
   @column.dateTime({ autoCreate: true })
   declare createdAt: DateTime

@@ -4,7 +4,7 @@ import User from '#models/user'
 import type { BelongsTo, HasMany } from '@adonisjs/lucid/types/relations'
 import Attachment from '#models/attachment'
 import Task from '#models/task'
-import Team from "#models/team";
+import Team from '#models/team'
 
 export default class Comment extends BaseModel {
   @column({ isPrimary: true })

@@ -53,7 +53,7 @@ export default class AttachmentsController {
       await attachment.save()
       return response.status(200).json(attachment)
     } catch (error) {
-      return error
+      throw error
     }
   }
 

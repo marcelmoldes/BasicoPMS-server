@@ -27,7 +27,7 @@ export default class ProjectController {
       })
       return response.status(200).json(project)
     } catch (error) {
-      return error
+      throw error
     }
   }
 
@@ -62,7 +62,7 @@ export default class ProjectController {
       await project.merge(payload).save()
       return response.json(project)
     } catch (error) {
-      return error
+      throw error
     }
   }
 

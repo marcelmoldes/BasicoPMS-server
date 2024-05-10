@@ -24,7 +24,7 @@ export default class AuthController {
       })
       return response.status(200).json(user)
     } catch (error) {
-      return error
+      throw error
     }
   }
 

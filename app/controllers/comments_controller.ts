@@ -38,7 +38,7 @@ export default class CommentsController {
       await comment.save()
       return response.status(200).json(comment)
     } catch (error) {
-      return error
+      throw error
     }
   }
 
@@ -67,7 +67,7 @@ export default class CommentsController {
       await comment.merge(payload).save()
       return response.json(comment)
     } catch (error) {
-      return error
+      throw error
     }
   }
 

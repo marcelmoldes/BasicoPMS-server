@@ -21,7 +21,7 @@ export default class UsersController {
       })
       return response.status(200).json(user)
     } catch (error) {
-      return error
+      throw error
     }
   }
 
@@ -51,7 +51,7 @@ export default class UsersController {
       await user.merge(payload).save()
       return response.json(user)
     } catch (error) {
-      return error
+      throw error
     }
   }
 

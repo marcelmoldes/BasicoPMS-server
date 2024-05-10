@@ -48,7 +48,7 @@ export default class TaskController {
       await task.save()
       return response.status(200).json(task)
     } catch (error) {
-      return error
+      throw error
     }
   }
 
@@ -86,7 +86,7 @@ export default class TaskController {
       await task.merge(payload).save()
       return response.json(task)
     } catch (error) {
-      return error
+      throw error
     }
   }
 

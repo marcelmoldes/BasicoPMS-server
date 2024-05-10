@@ -4,7 +4,8 @@ import User from '#models/user'
 
 export default class UsersController {
   async index({ request, auth }: HttpContext) {
-    const teamId = auth.user?.teamId
+    if (!auth.user) return
+    const teamId = auth.user.teamId
     const page = request.input('page')
     const limit = request.input('limit')
     return await User.query().where('team_id', teamId).paginate(page, limit)

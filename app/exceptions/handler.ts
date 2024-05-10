@@ -13,6 +13,20 @@ export default class HttpExceptionHandler extends ExceptionHandler {
    * response to the client
    */
   async handle(error: unknown, ctx: HttpContext) {
+    if (error.code === 'E_VALIDATION_ERROR') {
+      const errors = error.messages
+      const formattedErrors = {}
+
+      // Convert the array of errors to an object
+      for (let err of errors) {
+        formattedErrors[err.field] = err.message
+      }
+
+      // Return a response with the transformed errors
+      return ctx.response.status(error.status).send({
+        errors: formattedErrors,
+      })
+    }
     return super.handle(error, ctx)
   }
 

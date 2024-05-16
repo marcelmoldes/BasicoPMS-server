@@ -8,11 +8,16 @@ export default class ProjectController {
     if (!auth.user) return
     const teamId = auth.user?.teamId
     const page = request.input('page')
-    const limit = request.input('limit')
+    const perPage = request.input('perPage')
+    const searchString = request.input('searchString')
+    const sortBy = request.input('sortBy', 'createdAt')
+    const sortOrder = request.input('sortOrder', 'asc')
     return await Project.query()
       .where('team_id', teamId)
       .where('deleted', false)
-      .paginate(page, limit)
+      .where('name', 'LIKE', '%' + searchString + '%')
+      .orderBy(sortBy, sortOrder)
+      .paginate(page, perPage)
   }
 
   async store({ request, response, auth }: HttpContext) {

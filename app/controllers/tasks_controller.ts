@@ -9,15 +9,15 @@ export default class TaskController {
     if (!auth.user) return
     const teamId = auth.user?.teamId
     const page = request.input('page')
-    const limit = request.input('limit')
+    const perPage = request.input('perPage')
     const projectId = request.input('projectId')
     if (projectId) {
       return await Task.query()
         .where('team_id', teamId)
         .andWhere('project_id', projectId)
-        .paginate(page, limit)
+        .paginate(page, perPage)
     } else {
-      return await Task.query().where('team_id', teamId).paginate(page, limit)
+      return await Task.query().where('team_id', teamId).paginate(page, perPage)
     }
   }
 

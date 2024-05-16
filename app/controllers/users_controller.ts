@@ -7,8 +7,8 @@ export default class UsersController {
     if (!auth.user) return
     const teamId = auth.user.teamId
     const page = request.input('page')
-    const limit = request.input('limit')
-    return await User.query().where('team_id', teamId).paginate(page, limit)
+    const perPage = request.input('perPage')
+    return await User.query().where('team_id', teamId).paginate(page, perPage)
   }
 
   async store({ request, response, auth }: HttpContext) {

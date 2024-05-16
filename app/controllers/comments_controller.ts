@@ -9,15 +9,15 @@ export default class CommentsController {
     if (!auth.user) return
     const teamId = auth.user?.teamId
     const page = request.input('page')
-    const limit = request.input('limit')
+    const perPage = request.input('perPage')
     const taskId = request.input('taskId')
     if (taskId) {
       return await Comment.query()
         .where('team_id', teamId)
         .andWhere('task_id', taskId)
-        .paginate(page, limit)
+        .paginate(page, perPage)
     } else {
-      return await Comment.query().where('team_id', teamId).paginate(page, limit)
+      return await Comment.query().where('team_id', teamId).paginate(page, perPage)
     }
   }
 

@@ -10,21 +10,21 @@ export default class AttachmentsController {
     if (!auth.user) return
     const teamId = auth.user?.teamId
     const page = request.input('page')
-    const limit = request.input('limit')
+    const perPage = request.input('perPage')
     const taskId = request.input('taskId')
     const commentId = request.input('commentId')
     if (taskId) {
       return await Attachment.query()
         .where('team_id', teamId)
         .andWhere('task_id', taskId)
-        .paginate(page, limit)
+        .paginate(page, perPage)
     } else if (commentId) {
       return await Attachment.query()
         .where('team_id', teamId)
         .andWhere('comment_id', commentId)
-        .paginate(page, limit)
+        .paginate(page, perPage)
     } else {
-      return await Attachment.query().where('team_id', teamId).paginate(page, limit)
+      return await Attachment.query().where('team_id', teamId).paginate(page, perPage)
     }
   }
 

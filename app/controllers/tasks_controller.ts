@@ -7,18 +7,21 @@ import Project from '#models/project'
 export default class TaskController {
   async index({ request, auth }: HttpContext) {
     if (!auth.user) return
-    const teamId = auth.user?.teamId
-    const page = request.input('page')
-    const perPage = request.input('perPage')
     const projectId = request.input('projectId')
-    if (projectId) {
-      return await Task.query()
-        .where('team_id', teamId)
-        .andWhere('project_id', projectId)
-        .paginate(page, perPage)
-    } else {
-      return await Task.query().where('team_id', teamId).paginate(page, perPage)
+    const teamId = auth.user?.teamId
+    const currentPage = request.input('currentPage')
+    const perPage = request.input('perPage', '')
+    const searchString = request.input('searchString')
+    const sortBy = request.input('sortBy', 'createdAt')
+    const sortOrder = request.input('sortOrder', 'asc')
+    const query = Task.query().where('team_id', teamId)
+    if (searchString) {
+      query.where('name', 'LIKE', `%${searchString}%`)
     }
+    if (projectId) {
+      return await Task.query().where('project_id', projectId)
+    }
+    return await query.orderBy(sortBy, sortOrder).paginate(currentPage, perPage)
   }
 
   async store({ bouncer, request, response, auth }: HttpContext) {

@@ -19,7 +19,7 @@ export default class TaskController {
       query.where('name', 'LIKE', `%${searchString}%`)
     }
     if (projectId) {
-      return await Task.query().where('project_id', projectId)
+      query.where('project_id', projectId)
     }
     return await query.orderBy(sortBy, sortOrder).paginate(currentPage, perPage)
   }

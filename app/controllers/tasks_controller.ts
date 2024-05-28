@@ -73,6 +73,7 @@ export default class TaskController {
     try {
       const task = await Task.findOrFail(params.id)
       const taskData = request.only([
+        'projectId',
         'name',
         'description',
         'status',

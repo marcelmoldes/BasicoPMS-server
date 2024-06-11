@@ -10,7 +10,7 @@ export default class TaskController {
     const projectId = request.input('projectId')
     const teamId = auth.user?.teamId
     const currentPage = request.input('currentPage')
-    const perPage = request.input('perPage', '')
+    const perPage = request.input('perPage')
     const searchString = request.input('searchString')
     const sortBy = request.input('sortBy', 'createdAt')
     const sortOrder = request.input('sortOrder', 'asc')

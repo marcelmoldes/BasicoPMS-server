@@ -13,7 +13,8 @@ export default class UsersController {
 
   async store({ request, response, auth }: HttpContext) {
     const teamId = auth.user?.teamId
-    const userData = request.only(['firstName', 'lastName', 'email', 'password'])
+    const userData = request.only(['firstName', 'lastName', 'email', 'password', 'role'])
+    userData.password = 'password'
     const payload = await createUserValidator.validate(userData)
     try {
       const user = await User.create({
@@ -46,7 +47,7 @@ export default class UsersController {
         id: params.id,
         teamId,
       })
-      const userData = request.only(['firstName', 'lastName', 'email', 'password'])
+      const userData = request.only(['firstName', 'lastName', 'email', 'password', 'role'])
       const payload = await updateUserValidator.validate(userData)
       await user.save()
       await user.merge(payload).save()

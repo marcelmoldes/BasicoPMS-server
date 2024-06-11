@@ -3,7 +3,7 @@ import vine from '@vinejs/vine'
 export const taskValidator = vine.compile(
   vine.object({
     name: vine.string().trim().minLength(3).maxLength(30),
-    status: vine.string().trim().in(['active', 'in_progress', 'on_track', 'delayed']),
+    status: vine.string().trim().in(['open', 'in_progress', 'completed']),
     priority: vine.string().trim().minLength(3).maxLength(20),
     description: vine.string().trim().minLength(3).maxLength(350),
     startDate: vine.date(),

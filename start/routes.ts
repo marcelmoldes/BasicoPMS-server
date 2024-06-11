@@ -7,6 +7,7 @@ const TasksController = () => import('#controllers/tasks_controller')
 const AttachmentsController = () => import('#controllers/attachments_controller')
 const CommentsController = () => import('#controllers/comments_controller')
 const ProjectsController = () => import('#controllers/projects_controller')
+const AnalyticsController = () => import('#controllers/analytics_controller')
 
 router.post('/login', [AuthController, 'login'])
 router.post('/register', [AuthController, 'register'])
@@ -35,6 +36,12 @@ router.resource('comments', CommentsController).use(
   })
 )
 router.resource('attachments', AttachmentsController).use(
+  '*',
+  middleware.auth({
+    guards: ['api'],
+  })
+)
+router.resource('analytics', AnalyticsController).use(
   '*',
   middleware.auth({
     guards: ['api'],

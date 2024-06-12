@@ -1,6 +1,8 @@
 import type { HttpContext } from '@adonisjs/core/http'
 import { createUserValidator, updateUserValidator } from '#validators/user_validator'
 import User from '#models/user'
+import sgMail from '@sendgrid/mail'
+sgMail.setApiKey(process.env.SENDGRID_API_KEY)
 
 export default class UsersController {
   async index({ request, auth }: HttpContext) {
@@ -13,15 +15,41 @@ export default class UsersController {
 
   async store({ request, response, auth }: HttpContext) {
     const teamId = auth.user?.teamId
-    const userData = request.only(['firstName', 'lastName', 'email', 'password', 'role'])
-    userData.password = 'password'
+    const userData = request.only(['firstName', 'lastName', 'email', 'role'])
+
     const payload = await createUserValidator.validate(userData)
+    const password = Math.random().toString(36).substring(2, 18)
     try {
       const user = await User.create({
         teamId,
         ...payload,
+        password,
       })
-      return response.status(200).json(user)
+      const data = {
+        to: user.email,
+        from: 'moldesmarcel41@gmail.com',
+        subject: 'Welcome to BasicoPMS',
+        templateId: 'd-60ad5a0eb2ff4dd6a4ae2e24af996d82',
+        personalizations: [
+          {
+            to: [{ email: user.email }],
+            dynamic_template_data: {
+              FirstName: user.firstName,
+              Password: password,
+            },
+          },
+        ],
+      }
+      try {
+        const result = await sgMail.send(data)
+      } catch (error) {
+        console.error(error)
+
+        if (error.response) {
+          console.error(error.response.body)
+        }
+      }
+      return response.status(200).json(user, data)
     } catch (error) {
       throw error
     }

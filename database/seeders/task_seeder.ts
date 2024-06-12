@@ -10,7 +10,7 @@ export default class extends BaseSeeder {
         projectId: 1,
         description: faker.commerce.productDescription(),
         priority: faker.company.buzzVerb(),
-        status: faker.company.buzzVerb(),
+        status: faker.number.int({ min: 0, max: 1 }) % 2 ? 'open' : 'closed',
         startDate: faker.date.anytime(),
         dueDate: faker.date.anytime(),
         completionDate: faker.date.anytime(),

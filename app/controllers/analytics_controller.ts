@@ -7,14 +7,29 @@ export default class AnalyticsController {
     {
       const openTasks = await db
         .from('tasks')
+        .where('team_id', auth.user.teamId)
         .whereIn('status', ['open', 'in_progress'])
         .count('* as open')
-      const closedTasks = await db.from('tasks').where('status', 'completed').count('* as closed')
-      const openProjects = await db.from('projects').where('status', 'open').count('* as open')
+      const closedTasks = await db
+        .from('tasks')
+        .where('team_id', auth.user.teamId)
+        .where('status', 'closed')
+        .count('* as closed')
       const closedProjects = await db
         .from('projects')
-        .whereIn('status', ['open', 'in_progress'])
+        .where('team_id', auth.user.teamId)
+        .where('status', 'closed')
         .count('* as closed')
+      const openProjects = await db
+        .from('projects')
+        .where('team_id', auth.user.teamId)
+        .whereIn('status', ['open', 'in_progress'])
+        .count('* as open')
+      await new Promise((resolve) => {
+        setTimeout(() => {
+          resolve(null)
+        }, 1000)
+      })
       return {
         openTasks: openTasks[0].open,
         closedTasks: closedTasks[0].closed,

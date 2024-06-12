@@ -5,7 +5,6 @@ export const registerValidator = vine.compile(
     first_name: vine.string().trim().minLength(3).maxLength(30),
     last_name: vine.string().trim().minLength(3).maxLength(55),
     email: vine.string().trim().email().minLength(3).maxLength(40),
-    password: vine.string().trim().minLength(3).maxLength(12),
     team_name: vine.string().trim().minLength(3).maxLength(50),
   })
 )

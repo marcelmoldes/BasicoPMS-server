@@ -7,7 +7,7 @@ export default class extends BaseSeeder {
     await Project.create({
       name: faker.company.name(),
       description: faker.commerce.productDescription(),
-      status: faker.company.buzzVerb(),
+      status: faker.number.int({ min: 0, max: 1 }) % 2 ? 'open' : 'closed',
       startDate: faker.date.anytime(),
       endDate: faker.date.anytime(),
       ownerId: 1,

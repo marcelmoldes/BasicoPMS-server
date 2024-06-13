@@ -11,12 +11,23 @@ const AnalyticsController = () => import('#controllers/analytics_controller')
 
 router.post('/login', [AuthController, 'login'])
 router.post('/register', [AuthController, 'register'])
+router.get('/tasks/calendar', [TasksController, 'calendar']).use(
+  middleware.auth({
+    guards: ['api'],
+  })
+)
+router.get('/projects/calendar', [ProjectsController, 'calendar']).use(
+  middleware.auth({
+    guards: ['api'],
+  })
+)
 router.resource('tasks', TasksController).use(
   '*',
   middleware.auth({
     guards: ['api'],
   })
 )
+
 router.resource('users', UsersController).use(
   '*',
   middleware.auth({

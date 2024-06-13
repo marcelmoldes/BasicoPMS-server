@@ -2,6 +2,7 @@ import type { HttpContext } from '@adonisjs/core/http'
 import Project from '#models/project'
 import { projectValidator } from '#validators/project_validator'
 import ProjectPolicy from '#policies/project_policy'
+import Task from '#models/task'
 
 export default class ProjectController {
   async index({ request, auth }: HttpContext) {
@@ -83,5 +84,21 @@ export default class ProjectController {
     } catch (error) {
       return response.status(400).json({ message: `Project not found,cant delete` })
     }
+  }
+  async calendar({ auth }: HttpContext) {
+    if (!auth.user) return
+    const teamId = auth.user?.teamId
+    Project.query().where('team_id', teamId).where('deleted', false)
+    const projects = await Project.query()
+    const taskObjects = []
+    for (const project of projects) {
+      taskObjects.push({
+        id: project.id,
+        title: project.name,
+        start: project.endDate,
+        end: project.endDate,
+      })
+    }
+    return taskObjects
   }
 }

@@ -107,4 +107,25 @@ export default class TaskController {
       return response.status(400).json({ message: `Task not found,cant delete` })
     }
   }
+
+  async calendar({ request, auth }: HttpContext) {
+    if (!auth.user) return
+    const projectId = request.input('projectId')
+    const teamId = auth.user?.teamId
+    const query = Task.query().where('team_id', teamId)
+    if (projectId) {
+      query.where('project_id', projectId)
+    }
+    const tasks = await Task.query()
+    const taskObjects = []
+    for (const task of tasks) {
+      taskObjects.push({
+        id: task.id,
+        title: task.name,
+        start: task.dueDate,
+        end: task.dueDate,
+      })
+    }
+    return taskObjects
+  }
 }

@@ -57,7 +57,6 @@ export default class AuthController {
     const { email, password } = request.only(['email', 'password'])
     const user = await User.findBy('email', email)
     if (!user) {
-      console.log('a')
       return response.unprocessableEntity({
         error: 'Invalid email',
       })
@@ -73,6 +72,46 @@ export default class AuthController {
       type: 'bearer',
       value: token.value!.release(),
       user,
+    }
+  }
+
+  async forgotPassword({ request, response }: HttpContext) {
+    const { email } = request.only(['email'])
+
+    try {
+      const newPassword = Math.random().toString(36).substring(2, 18)
+      const user = await User.findByOrFail('email', email)
+      user.password = newPassword
+
+      await user.save()
+      await user.merge(user).save()
+      const data = {
+        to: user.email,
+        from: 'moldesmarcel41@gmail.com',
+        subject: 'Forgot Password',
+        templateId: 'd-f698d27f8c5f4bc7bf1b4b5c95cc1733',
+        personalizations: [
+          {
+            to: [{ email: user.email }],
+            dynamic_template_data: {
+              FirstName: user.firstName,
+              Password: newPassword,
+            },
+          },
+        ],
+      }
+
+      const result = await sgMail.send(data)
+
+      return response.ok({
+        message: 'Password updated successfully. Check your email for the new password.',
+      })
+    } catch (error) {
+      console.error(error)
+      if (error.response) {
+        console.error(error.response.body)
+      }
+      return response.badRequest({ message: 'Unable to process your request at the moment.' })
     }
   }
 }

@@ -88,17 +88,14 @@ export default class ProjectController {
   async calendar({ auth }: HttpContext) {
     if (!auth.user) return
     const teamId = auth.user?.teamId
-    Project.query().where('team_id', teamId).where('deleted', false)
-    const projects = await Project.query()
-    const taskObjects = []
-    for (const project of projects) {
-      taskObjects.push({
-        id: project.id,
-        title: project.name,
-        start: project.endDate,
-        end: project.endDate,
-      })
-    }
+    const projects = await Project.query().where('team_id', teamId).where('deleted', false)
+    const taskObjects = projects.map((project) => ({
+      id: project.id,
+      title: project.name,
+      start: project.endDate,
+      end: project.endDate,
+    }))
+
     return taskObjects
   }
 }

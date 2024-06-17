@@ -9,6 +9,14 @@ const CommentsController = () => import('#controllers/comments_controller')
 const ProjectsController = () => import('#controllers/projects_controller')
 const AnalyticsController = () => import('#controllers/analytics_controller')
 
+router.post('/forgot-password', [AuthController, 'forgotPassword'])
+
+router.put('/change-password', [UsersController, 'changePassword']).use(
+  middleware.auth({
+    guards: ['api'],
+  })
+)
+
 router.post('/login', [AuthController, 'login'])
 router.post('/register', [AuthController, 'register'])
 router.get('/tasks/calendar', [TasksController, 'calendar']).use(

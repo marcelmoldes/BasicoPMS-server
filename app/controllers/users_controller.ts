@@ -2,6 +2,7 @@ import type { HttpContext } from '@adonisjs/core/http'
 import { createUserValidator, updateUserValidator } from '#validators/user_validator'
 import User from '#models/user'
 import sgMail from '@sendgrid/mail'
+import hash from '@adonisjs/core/services/hash'
 sgMail.setApiKey(process.env.SENDGRID_API_KEY)
 
 export default class UsersController {
@@ -13,13 +14,21 @@ export default class UsersController {
     return await User.query().where('team_id', teamId).paginate(page, perPage)
   }
 
-  async store({ request, response, auth }: HttpContext) {
+  async store({ request, params, response, auth }: HttpContext) {
     const teamId = auth.user?.teamId
     const userData = request.only(['firstName', 'lastName', 'email', 'role'])
 
     const payload = await createUserValidator.validate(userData)
     const password = Math.random().toString(36).substring(2, 18)
     try {
+      const existingUser = await User.query()
+        .where('email', payload.email)
+        .where('teamId', teamId)
+        .first()
+
+      if (existingUser) {
+        return response.status(409).json({ message: 'User already exists with this email' })
+      }
       const user = await User.create({
         teamId,
         ...payload,
@@ -75,7 +84,7 @@ export default class UsersController {
         id: params.id,
         teamId,
       })
-      const userData = request.only(['firstName', 'lastName', 'email', 'password', 'role'])
+      const userData = request.only(['firstName', 'lastName', 'email', 'password'])
       const payload = await updateUserValidator.validate(userData)
       await user.save()
       await user.merge(payload).save()
@@ -96,6 +105,27 @@ export default class UsersController {
       return response.status(200).json({ message: 'User deleted' })
     } catch (error) {
       return response.status(400).json({ message: `User not found,cant delete` })
+    }
+  }
+
+  async changePassword({ request, response, auth }: HttpContext) {
+    try {
+      const user = await User.findByOrFail({
+        id: auth.user?.id,
+      })
+      const { currentPassword, newPassword } = request.only(['currentPassword', 'newPassword'])
+
+      if (!(await hash.verify(user.password, currentPassword))) {
+        return response.badRequest({ message: 'Current password is incorrect.' })
+      }
+
+      user.password = newPassword
+      await user.save()
+
+      return response.ok({ message: 'Password updated successfully.' })
+    } catch (error) {
+      console.log(error)
+      return response.status(400).json({ message: `Can not change password` })
     }
   }
 }

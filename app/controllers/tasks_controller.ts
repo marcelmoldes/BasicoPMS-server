@@ -117,15 +117,12 @@ export default class TaskController {
       query.where('project_id', projectId)
     }
     const tasks = await Task.query()
-    const taskObjects = []
-    for (const task of tasks) {
-      taskObjects.push({
-        id: task.id,
-        title: task.name,
-        start: task.dueDate,
-        end: task.dueDate,
-      })
-    }
+    const taskObjects = tasks.map((task) => ({
+      id: task.id,
+      title: task.name,
+      start: task.dueDate,
+      end: task.dueDate,
+    }))
     return taskObjects
   }
 }

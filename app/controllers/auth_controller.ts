@@ -104,14 +104,14 @@ export default class AuthController {
       const result = await sgMail.send(data)
 
       return response.ok({
-        message: 'Password updated successfully. Check your email for the new password.',
+        message: 'Please check your email',
       })
     } catch (error) {
       console.error(error)
       if (error.response) {
         console.error(error.response.body)
       }
-      return response.badRequest({ message: 'Unable to process your request at the moment.' })
+      return response.badRequest({ message: 'Unable to process your request at the moment!' })
     }
   }
 }

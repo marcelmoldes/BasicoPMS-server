@@ -10,6 +10,11 @@ const ProjectsController = () => import('#controllers/projects_controller')
 const AnalyticsController = () => import('#controllers/analytics_controller')
 
 router.post('/forgot-password', [AuthController, 'forgotPassword'])
+router.get('/tasks/config', [TasksController, 'config']).use(
+  middleware.auth({
+    guards: ['api'],
+  })
+)
 
 router.put('/change-password', [UsersController, 'changePassword']).use(
   middleware.auth({

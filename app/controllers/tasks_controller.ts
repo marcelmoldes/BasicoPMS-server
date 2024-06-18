@@ -3,6 +3,7 @@ import Task from '#models/task'
 import TaskPolicy from '#policies/task_policy'
 import { taskValidator } from '#validators/task_validator'
 import Project from '#models/project'
+import { taskPriorityOptions, taskStatusOptions } from '#config/resources/tasks.config'
 
 export default class TaskController {
   async index({ request, auth }: HttpContext) {
@@ -124,5 +125,38 @@ export default class TaskController {
       end: task.dueDate,
     }))
     return taskObjects
+  }
+  async config({ request, auth }: HttpContext) {
+    if (!auth.user) return
+
+    // Status Options
+    const statusOptions = []
+    const taskKeys = Object.keys(taskStatusOptions)
+    for (const key of taskKeys) {
+      statusOptions.push({
+        key: key,
+        value: taskStatusOptions[key],
+      })
+    }
+
+    // Priority Options
+    const priorityOptions = []
+    const projectKeys = Object.keys(taskPriorityOptions)
+    for (const key of projectKeys) {
+      priorityOptions.push({
+        key: key,
+        value: taskPriorityOptions[key],
+      })
+    }
+    const response = {
+      status: statusOptions,
+      priority: priorityOptions,
+      projects: [
+        {
+          1: 'Algun proyecto',
+        },
+      ],
+    }
+    return response;
   }
 }

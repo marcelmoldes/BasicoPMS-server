@@ -3,7 +3,11 @@ import Task from '#models/task'
 import TaskPolicy from '#policies/task_policy'
 import { taskValidator } from '#validators/task_validator'
 import Project from '#models/project'
-import { taskPriorityOptions, taskStatusOptions } from '#config/resources/tasks.config'
+import {
+  completionPercentageOptions,
+  taskPriorityOptions,
+  taskStatusOptions,
+} from '#config/resources/tasks.config'
 
 export default class TaskController {
   async index({ request, auth }: HttpContext) {
@@ -128,35 +132,51 @@ export default class TaskController {
   }
   async config({ request, auth }: HttpContext) {
     if (!auth.user) return
-
+    // Completion Percentage Options
+    const completionOptions = []
+    const completionKeys = Object.keys(completionPercentageOptions)
+    for (const key of completionKeys) {
+      completionOptions.push({
+        value: key,
+        label: completionPercentageOptions[key],
+      })
+    }
     // Status Options
     const statusOptions = []
     const taskKeys = Object.keys(taskStatusOptions)
     for (const key of taskKeys) {
       statusOptions.push({
-        key: key,
-        value: taskStatusOptions[key],
+        value: key,
+        label: taskStatusOptions[key],
       })
     }
 
     // Priority Options
     const priorityOptions = []
-    const projectKeys = Object.keys(taskPriorityOptions)
-    for (const key of projectKeys) {
+    const priorityKeys = Object.keys(taskPriorityOptions)
+    for (const key of priorityKeys) {
       priorityOptions.push({
-        key: key,
-        value: taskPriorityOptions[key],
+        value: key,
+        label: taskPriorityOptions[key],
       })
     }
-    const response = {
-      status: statusOptions,
-      priority: priorityOptions,
-      projects: [
-        {
-          1: 'Algun proyecto',
-        },
-      ],
+
+    // Project Options
+    const teamId = auth.user?.teamId
+    const projectOptions = []
+    const projects = await Project.query().where('team_id', teamId)
+    for (const project of projects) {
+      projectOptions.push({
+        value: project.id,
+        label: project.name,
+      })
     }
-    return response;
+
+    const response = {
+      statusOptions,
+      priorityOptions,
+      projectOptions,
+    }
+    return response
   }
 }

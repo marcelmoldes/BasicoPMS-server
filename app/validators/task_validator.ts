@@ -1,5 +1,9 @@
 import vine from '@vinejs/vine'
-import { taskPriorityOptions, taskStatusOptions } from '#config/resources/tasks.config'
+import {
+  completionPercentageOptions,
+  taskPriorityOptions,
+  taskStatusOptions,
+} from '#config/resources/tasks.config'
 
 export const taskValidator = vine.compile(
   vine.object({
@@ -10,7 +14,7 @@ export const taskValidator = vine.compile(
     startDate: vine.date(),
     dueDate: vine.date(),
     completionDate: vine.date(),
-    completionPercentage: vine.number(),
+    completionPercentage: vine.string().trim().in(Object.keys(completionPercentageOptions)),
     projectId: vine.number(),
   })
 )

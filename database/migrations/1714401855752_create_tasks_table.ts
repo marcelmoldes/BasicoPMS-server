@@ -7,7 +7,7 @@ export default class extends BaseSchema {
   async up() {
     this.schema.createTable(this.tableName, (table) => {
       table.increments('id').notNullable()
-      table.integer('project_id').notNullable()
+      table.integer('project_id').notNullable().unsigned()
       table.string('name', 65).notNullable()
       table.text('description').notNullable()
       table.string('status', 30).notNullable()
@@ -19,7 +19,7 @@ export default class extends BaseSchema {
       table.integer('owner_id').notNullable()
       table.datetime('created_at').notNullable()
       table.datetime('updated_at').notNullable()
-      table.integer('team_id').notNullable()
+      table.integer('team_id').notNullable().unsigned()
     })
   }
 

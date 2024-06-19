@@ -16,7 +16,7 @@ export default class extends BaseSchema {
       table.date('due_date').nullable()
       table.date('completion_date').nullable()
       table.decimal('completion_percentage').notNullable()
-      table.integer('owner_id').notNullable()
+      table.integer('owner_id').notNullable().unsigned()
       table.datetime('created_at').notNullable()
       table.datetime('updated_at').notNullable()
       table.integer('team_id').notNullable().unsigned()

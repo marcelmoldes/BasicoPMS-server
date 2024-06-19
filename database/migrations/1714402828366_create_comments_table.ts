@@ -6,9 +6,9 @@ export default class extends BaseSchema {
   async up() {
     this.schema.createTable(this.tableName, (table) => {
       table.increments('id').notNullable()
-      table.integer('task_id').notNullable()
-      table.integer('user_id').notNullable()
-      table.integer('team_id').notNullable()
+      table.integer('task_id').notNullable().unsigned()
+      table.integer('user_id').notNullable().unsigned()
+      table.integer('team_id').notNullable().unsigned()
       table.text('content').notNullable()
       table.datetime('created_at').notNullable()
       table.datetime('updated_at').notNullable()

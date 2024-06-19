@@ -4,6 +4,14 @@ import User from '#models/user'
 import sgMail from '@sendgrid/mail'
 import hash from '@adonisjs/core/services/hash'
 sgMail.setApiKey(process.env.SENDGRID_API_KEY)
+import { userRoleOptions } from '#config/resources/users.config'
+import {
+  completionPercentageOptions,
+  taskPriorityOptions,
+  taskStatusOptions,
+} from '#config/resources/tasks.config'
+import Project from '#models/project'
+import Team from '#models/team'
 
 export default class UsersController {
   async index({ request, auth }: HttpContext) {
@@ -127,5 +135,29 @@ export default class UsersController {
       console.log(error)
       return response.status(400).json({ message: `Can not change password` })
     }
+  }
+  async config({ request, auth }: HttpContext) {
+    if (!auth.user) return
+
+    // Status Options
+    const roleOptions = []
+    const userKeys = Object.keys(userRoleOptions)
+    for (const key of userKeys) {
+      roleOptions.push({
+        value: key,
+        label: userRoleOptions[key],
+      })
+    }
+
+    await new Promise((resolve) => {
+      setTimeout(() => {
+        resolve(null)
+      }, 1000)
+    })
+
+    const response = {
+      roleOptions,
+    }
+    return response
   }
 }

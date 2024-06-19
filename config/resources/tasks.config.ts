@@ -11,9 +11,9 @@ export const taskPriorityOptions = {
 }
 
 export const completionPercentageOptions = {
-  10: '10',
-  25: '25',
-  50: '50',
-  85: '85',
-  100: '100',
+  10: '10%',
+  25: '25%',
+  50: '50%',
+  85: '85%',
+  100: '100%',
 }

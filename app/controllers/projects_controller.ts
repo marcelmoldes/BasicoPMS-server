@@ -2,7 +2,8 @@ import type { HttpContext } from '@adonisjs/core/http'
 import Project from '#models/project'
 import { projectValidator } from '#validators/project_validator'
 import ProjectPolicy from '#policies/project_policy'
-import Task from '#models/task'
+
+import { projectStatusOptions } from '#config/resources/projects.config'
 
 export default class ProjectController {
   async index({ request, auth }: HttpContext) {
@@ -97,5 +98,27 @@ export default class ProjectController {
     }))
 
     return taskObjects
+  }
+  async config({ request, auth }: HttpContext) {
+    if (!auth.user) return
+    const statusOptions = []
+    const projectKeys = Object.keys(projectStatusOptions)
+    for (const key of projectKeys) {
+      statusOptions.push({
+        value: key,
+        label: projectStatusOptions[key],
+      })
+    }
+
+    await new Promise((resolve) => {
+      setTimeout(() => {
+        resolve(null)
+      }, 1000)
+    })
+
+    const response = {
+      statusOptions,
+    }
+    return response
   }
 }

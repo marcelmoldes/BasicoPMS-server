@@ -15,6 +15,11 @@ router.get('/tasks/config', [TasksController, 'config']).use(
     guards: ['api'],
   })
 )
+router.get('/projects/config', [ProjectsController, 'config']).use(
+  middleware.auth({
+    guards: ['api'],
+  })
+)
 
 router.put('/change-password', [UsersController, 'changePassword']).use(
   middleware.auth({
@@ -47,6 +52,12 @@ router.resource('users', UsersController).use(
     guards: ['api'],
   })
 )
+router.get('/user/config', [UsersController, 'config']).use(
+  middleware.auth({
+    guards: ['api'],
+  })
+)
+
 router.resource('projects', ProjectsController).use(
   '*',
   middleware.auth({

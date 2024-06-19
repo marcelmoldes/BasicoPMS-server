@@ -172,10 +172,17 @@ export default class TaskController {
       })
     }
 
+    await new Promise((resolve) => {
+      setTimeout(() => {
+        resolve(null)
+      }, 1000)
+    })
+
     const response = {
       statusOptions,
       priorityOptions,
       projectOptions,
+      completionOptions,
     }
     return response
   }

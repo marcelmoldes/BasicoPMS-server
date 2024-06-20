@@ -54,24 +54,32 @@ export default class AuthController {
   }
 
   async login({ request, response }: HttpContext) {
-    const { email, password } = request.only(['email', 'password'])
-    const user = await User.findBy('email', email)
-    if (!user) {
-      return response.unprocessableEntity({
-        error: 'Invalid email',
-      })
-    }
-    const verified = await hash.verify(user.password, password)
-    if (!verified) {
-      return response.unprocessableEntity({
-        error: 'Invalid password',
-      })
-    }
-    const token = await User.accessTokens.create(user)
-    return {
-      type: 'bearer',
-      value: token.value!.release(),
-      user,
+    try {
+      const { email, password } = request.only(['email', 'password'])
+      const user = await User.findBy('email', email)
+      if (!user) {
+        return response.unprocessableEntity({
+          error: 'Unable to process your request at the moment',
+        })
+      }
+      const verified = await hash.verify(user.password, password)
+      if (!verified) {
+        return response.unprocessableEntity({
+          error: 'Invalid password',
+        })
+      }
+      const token = await User.accessTokens.create(user)
+      return {
+        type: 'bearer',
+        value: token.value!.release(),
+        user,
+      }
+    } catch (error) {
+      console.error(error)
+      if (error.response) {
+        console.error(error.response.body)
+      }
+      return response.badRequest({ message: 'Unable to process your request at the moment' })
     }
   }
 
@@ -111,7 +119,7 @@ export default class AuthController {
       if (error.response) {
         console.error(error.response.body)
       }
-      return response.badRequest({ message: 'Unable to process your request at the moment!' })
+      return response.badRequest({ message: 'Unable to process your request at the moment' })
     }
   }
 }

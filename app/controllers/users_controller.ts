@@ -124,7 +124,7 @@ export default class UsersController {
       const { currentPassword, newPassword } = request.only(['currentPassword', 'newPassword'])
 
       if (!(await hash.verify(user.password, currentPassword))) {
-        return response.badRequest({ message: 'Current password is incorrect.' })
+        return response.badRequest({ message: 'Current password is incorrect' })
       }
 
       user.password = newPassword

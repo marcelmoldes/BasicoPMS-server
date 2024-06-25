@@ -15,6 +15,7 @@ export default class CommentsController {
       return await Comment.query()
         .where('team_id', teamId)
         .andWhere('task_id', taskId)
+        .orderBy('created_at', 'desc')
         .paginate(page, perPage)
     } else {
       return await Comment.query().where('team_id', teamId).paginate(page, perPage)

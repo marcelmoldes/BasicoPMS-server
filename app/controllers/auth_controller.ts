@@ -59,13 +59,13 @@ export default class AuthController {
       const user = await User.findBy('email', email)
       if (!user) {
         return response.unprocessableEntity({
-          error: 'Unable to process your request at the moment',
+          error: 'Unable to process your request,try again',
         })
       }
       const verified = await hash.verify(user.password, password)
       if (!verified) {
         return response.unprocessableEntity({
-          error: 'Invalid password',
+          error: 'Your password is invalid,please try again',
         })
       }
       const token = await User.accessTokens.create(user)

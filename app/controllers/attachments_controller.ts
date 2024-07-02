@@ -4,6 +4,7 @@ import { createAttachmentValidator } from '#validators/attachment_validator'
 import AttachmentPolicy from '#policies/attachment_policy'
 import Task from '#models/task'
 import Comment from '#models/comment'
+import Application from '@adonisjs/core/'
 
 export default class AttachmentsController {
   async index({ request, auth }: HttpContext) {
@@ -82,5 +83,36 @@ export default class AttachmentsController {
     } catch (error) {
       return response.status(400).json({ message: `Attachment not found,cant delete` })
     }
+  }
+  // app/Controllers/Http/FileUploadController.ts
+
+  async upload({ request, response }: HttpContext) {
+    const file = request.file('file', {
+      size: '2mb',
+      extnames: ['jpg', 'png', 'jpeg'],
+    })
+
+    if (file) {
+      if (!file.isValid) {
+        return response.badRequest({
+          errors: file.errors,
+        })
+      }
+
+      // Mueve el archivo a la carpeta 'uploads'
+      const fileName = `${new Date().getTime()}.${file.extname}`
+      await file.move(Application.tmpPath('uploads'), {
+        name: fileName,
+      })
+
+      // Verifica si el archivo se ha movido correctamente
+      if (!file.moved()) {
+        return file.error()
+      }
+
+      return response.ok({ message: 'File uploaded successfully!', path: fileName })
+    }
+
+    return response.badRequest('No file uploaded')
   }
 }

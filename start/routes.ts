@@ -29,6 +29,18 @@ router.put('/change-password', [UsersController, 'changePassword']).use(
 
 router.post('/login', [AuthController, 'login'])
 router.post('/register', [AuthController, 'register'])
+
+router.post('/upload', [TasksController, 'upload']).use(
+  middleware.auth({
+    guards: ['api'],
+  })
+)
+router.get('/download/:fileName', [TasksController, 'download']).use(
+  middleware.auth({
+    guards: ['api'],
+  })
+)
+
 router.get('/tasks/calendar', [TasksController, 'calendar']).use(
   middleware.auth({
     guards: ['api'],
